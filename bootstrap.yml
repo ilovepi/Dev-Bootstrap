@@ -1,0 +1,83 @@
+---
+
+#provision a host to have my normal dev environment
+
+- hosts: localhost
+  connection: local
+  gather_facts: True
+
+
+ # vars_files:
+ # - group_vars/all
+
+
+  tasks:
+  #- name: add repos
+  #  apt_repository: repo='ppa:apt-fast/stable' state=present
+
+  - name: Update packages
+    apt: name={{ item }} state=present update_cache=yes
+    with_items:
+        - vim-gtk
+        - tmux
+        - neovim
+        #- clang
+        - gcc
+        - clang-format-4.0
+        - atom
+        - sublime-text
+        - zsh
+        - python3
+        - python3-dev
+        - python3-pip
+        - ctags
+        - ruby
+        - rake
+        - npm
+        - ack-grep
+        - silversearcher-ag
+        - build-essential
+        - autotools-dev
+        - bison
+        - flex
+        #- apt-fast
+        - meld
+        - curl
+    become: true
+
+
+    # install oh-my-zsh && spf-13
+  - name: Download Software
+    - role: gantsign.oh-my-zsh
+    - username: paul
+    - theme: agnoster
+    - plugins:
+        - git
+        - git-extras
+        - colorize
+        - colored-man-pages
+        - ubuntu
+        - wd
+        - gnu-utils
+        - nmap
+        - npm
+        - nvm
+        - python
+        - rsync
+        - systemadmin
+        - terminator
+        - common-aliases
+        - zsh-syntax-highlighting
+
+
+  - name: install spf-13
+    command: curl https://j.mp/spf13-vim3 -L > spf13-vim.sh && sh spf13-vim.sh
+
+  - name: install powerline
+    - role: mjanser.powerline
+
+  #- name: Install compilers
+  #- name: Install zsh
+
+  #- name: Configure Byobu/Tmux
+  #- name:
