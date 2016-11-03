@@ -1,83 +1,69 @@
 ---
+- hosts: all
+  vars: 
+    spf13_output_file_name: spf13-script.sh
+  roles:
+      - role: gantsign.oh-my-zsh
+        users:
+            - username: vagrant
+              oh_my_zsh:
+                  theme: agnoster
+                  plugins:
+                      - git
+                      - git-extras
+                      - colorize
+                      - colored-man-pages
+                      - ubuntu
+                      - wd
+                      - gnu-utils
+                      - nmap
+                      - npm
+                      - nvm
+                      - python
+                      - rsync
+                      - systemadmin
+                      - terminator
+                      - common-aliases
+                      - zsh-syntax-highlighting
 
-#provision a host to have my normal dev environment
+      - role: mjanser.powerline
 
-- hosts: localhost
-  connection: local
-  gather_facts: True
-
-
- # vars_files:
- # - group_vars/all
-
-
+  become: true
+  become_method: sudo
   tasks:
-  #- name: add repos
-  #  apt_repository: repo='ppa:apt-fast/stable' state=present
+      - name: update apt cache
+        apt: update_cache=yes
+      - name: install bareflank deps
+        apt: name={{item}} state=present
+        #apt: name=flex state=present
+        with_items:
+            - software-properties-common
+            - python-software-properties
+            - apt-transport-https
+            - ca-certificates
+            - cmake
+            - docker
+            - build-essential
+            - linux-headers-4.4.0-45-generic
+            - libgmp-dev
+            - libmpc-dev
+            - libmpfr-dev
+            - flex
+            - bison
+            - nasm
+            - texinfo
 
-  - name: Update packages
-    apt: name={{ item }} state=present update_cache=yes
-    with_items:
-        - vim-gtk
-        - tmux
-        - neovim
-        #- clang
-        - gcc
-        - clang-format-4.0
-        - atom
-        - sublime-text
-        - zsh
-        - python3
-        - python3-dev
-        - python3-pip
-        - ctags
-        - ruby
-        - rake
-        - npm
-        - ack-grep
-        - silversearcher-ag
-        - build-essential
-        - autotools-dev
-        - bison
-        - flex
-        #- apt-fast
-        - meld
-        - curl
-    become: true
+      - name: install usability packages
+        apt: name={{item}} state=present
+        with_items:
+            - vim
+            - curl
+            - wget
+            - git
+            - zsh
 
+      - name: Download spf13 vim install script
+        command: curl http://j.mp/spf13-vim3 -L -o {{ spf13_output_file_name }}
 
-    # install oh-my-zsh && spf-13
-  - name: Download Software
-    - role: gantsign.oh-my-zsh
-    - username: paul
-    - theme: agnoster
-    - plugins:
-        - git
-        - git-extras
-        - colorize
-        - colored-man-pages
-        - ubuntu
-        - wd
-        - gnu-utils
-        - nmap
-        - npm
-        - nvm
-        - python
-        - rsync
-        - systemadmin
-        - terminator
-        - common-aliases
-        - zsh-syntax-highlighting
-
-
-  - name: install spf-13
-    command: curl https://j.mp/spf13-vim3 -L > spf13-vim.sh && sh spf13-vim.sh
-
-  - name: install powerline
-    - role: mjanser.powerline
-
-  #- name: Install compilers
-  #- name: Install zsh
-
-  #- name: Configure Byobu/Tmux
-  #- name:
+      - name: launch spf13 install script
+        command: sh {{ spf13_output_file_name }}
