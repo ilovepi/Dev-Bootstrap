@@ -1,0 +1,128 @@
+---
+- hosts: all
+  #vars: 
+    #spf13_output_file_name: spf13-script.sh
+  #roles:
+      #- role: gantsign.oh-my-zsh
+        #users:
+            #- username: vagrant
+              #oh_my_zsh:
+                  #theme: agnoster
+                  #plugins:
+                      #- git
+                      #- git-extras
+                      #- colorize
+                      #- colored-man-pages
+                      #- ubuntu
+                      #- wd
+                      #- gnu-utils
+                      #- nmap
+                      #- npm
+                      #- nvm
+                      #- python
+                      #- rsync
+                      #- systemadmin
+                      #- terminator
+                      #- common-aliases
+                      #- zsh-syntax-highlighting
+
+      #- role: mjanser.powerline
+
+  #become: true
+  #become_method: sudo
+  tasks:
+      ##- name: update apt cache
+        ##apt: update_cache=yes
+      #- name: install bareflank deps
+        #apt: name={{item}} state=present
+        ##apt: name=flex state=present
+        #with_items:
+            #- software-properties-common
+            #- python-software-properties
+            #- apt-transport-https
+            #- ca-certificates
+            #- cmake
+            #- docker
+            #- build-essential
+            #- linux-headers-4.4.0-45-generic
+            #- libgmp-dev
+            #- libmpc-dev
+            #- libmpfr-dev
+            #- flex
+            #- bison
+            #- nasm
+            #- texinfo
+
+      #- name: install usability packages
+        #apt: name={{item}} state=present
+        #with_items:
+            #- vim
+            #- curl
+            #- wget
+            #- git
+            #- zsh
+
+      #- name: Download spf13 vim install script
+        #command: curl http://j.mp/spf13-vim3 -L -o {{ spf13_output_file_name }}
+        #run_once: true
+        #become: true
+        #become_user: vagrant
+
+      #- name: launch spf13 install script
+        #command: sh {{ spf13_output_file_name }}
+        #run_once: true
+        #become: true
+        #become_user: vagrant
+
+      - name: Clone Multi Compiler project
+        git: repo=git@github.com:/securesystemslab/multicompiler-priv.git
+                dest=~/compilers/llvm
+                version=cfar_38
+                depth=1
+                accept_hostkey=true
+
+
+      - name: Clone Multi Compiler Clang
+        git: repo=git@github.com:/securesystemslab/multicompiler-clang-priv.git
+                dest=~/compilers/llvm/tools/clang
+                version=cfar_38
+                depth=1
+                accept_hostkey=true
+
+
+      - name: Clone Multi Compiler Compiler-RT
+        git: repo=git@github.com:/securesystemslab/multicompiler-compiler-rt-priv.git
+                dest=~/compilers/llvm/projects/compiler-rt
+                version=cfar_38
+                depth=1
+                accept_hostkey=true
+
+
+      - name: Clone Multi Compiler PoolAlloc
+        git: repo=git@github.com:/securesystemslab/poolalloc
+                dest=~/compilers/llvm/projects/poolalloc
+                version=cfar_38
+                depth=1
+                accept_hostkey=true
+
+
+
+      - name: Clone Multi Compiler SVF
+        git: repo=git@github.com:/rboggild/SVF
+                dest=~/compilers/llvm/projects/svf
+                depth=1
+                accept_hostkey=true
+
+
+
+      - name: Clone Gold Linker
+        git: repo=git@github.com:/securesystemslab/binutils.git
+                dest=~/compilers/binutils
+                depth=1
+                version=random_commons-2_24
+                accept_hostkey=true
+                update=no
+
+
+
+
