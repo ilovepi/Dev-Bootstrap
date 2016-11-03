@@ -72,6 +72,10 @@
             - autotools-dev
             - zlibc
             - autoconf
+            - libssl-ocaml-dev
+            - ocaml
+            - ocaml-source
+            - ocaml-libs
 
       - name: install usability packages
         apt: name={{item}} state=present
@@ -84,17 +88,25 @@
             - git
             - zsh
 
-      - name: Download spf13 vim install script
-        command: curl http://j.mp/spf13-vim3 -L -o {{ spf13_output_file_name }}
-        run_once: true
+      - name: Dist-upgrade
+        apt: 
+            update_cache: yes
+            upgrade: dist
         become: true
-        become_user: vagrant
+        become_method: sudo
 
-      - name: launch spf13 install script
-        command: sh {{ spf13_output_file_name }}
-        run_once: true
-        become: true
-        become_user: vagrant
+
+      #- name: Download spf13 vim install script
+        #get_url: url=http://j.mp/spf13-vim3 dest=~/{{ spf13_output_file_name }}
+        #run_once: true
+        #become: true
+        #become_user: vagrant
+
+      #- name: launch spf13 install script
+        #command: sh ~/{{ spf13_output_file_name }}
+        #run_once: true
+        #become: true
+        #become_user: vagrant
 
 
       - name: Clone Multi Compiler project
@@ -148,6 +160,11 @@
                 version=random_commons-2_24
                 accept_hostkey=true
                 update=no
+        become: true
+        become_user: vagrant
+
+      - name: Create compiler/tools directory
+        file: path=~/compilers/tools state=directory
         become: true
         become_user: vagrant
 
