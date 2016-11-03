@@ -28,13 +28,26 @@
 
       - role: mjanser.powerline
 
-  become: true
-  become_method: sudo
   tasks:
+      - name: add cmake repo
+        apt_repository: repo='ppa:george-edison55/cmake-3.x' state=present
+        become: true
+        become_method: sudo
+
+      - name: add ubuntu testing repos
+        apt_repository: repo='ppa:ubuntu-toolchain-r/test' state=present
+        become: true
+        become_method: sudo
+
       - name: update apt cache
         apt: update_cache=yes
+        become: true
+        become_method: sudo
+
       - name: install bareflank deps
         apt: name={{item}} state=present
+        become: true
+        become_method: sudo
         with_items:
             - software-properties-common
             - python-software-properties
@@ -62,6 +75,8 @@
 
       - name: install usability packages
         apt: name={{item}} state=present
+        become: true
+        become_method: sudo
         with_items:
             - vim
             - curl
@@ -69,17 +84,18 @@
             - git
             - zsh
 
-      #- name: Download spf13 vim install script
-        #command: curl http://j.mp/spf13-vim3 -L -o {{ spf13_output_file_name }}
-        #run_once: true
-        #become: true
-        #become_user: vagrant
+      - name: Download spf13 vim install script
+        command: curl http://j.mp/spf13-vim3 -L -o {{ spf13_output_file_name }}
+        run_once: true
+        become: true
+        become_user: vagrant
 
-      #- name: launch spf13 install script
-        #command: sh {{ spf13_output_file_name }}
-        #run_once: true
-        #become: true
-        #become_user: vagrant
+      - name: launch spf13 install script
+        command: sh {{ spf13_output_file_name }}
+        run_once: true
+        become: true
+        become_user: vagrant
+
 
       - name: Clone Multi Compiler project
         git: repo=git@github.com:/securesystemslab/multicompiler-priv.git
@@ -87,6 +103,8 @@
                 version=cfar_38
                 depth=1
                 accept_hostkey=true
+        become: true
+        become_user: vagrant
 
       - name: Clone Multi Compiler Clang
         git: repo=git@github.com:/securesystemslab/multicompiler-clang-priv.git
@@ -94,6 +112,8 @@
                 version=cfar_38
                 depth=1
                 accept_hostkey=true
+        become: true
+        become_user: vagrant
 
       - name: Clone Multi Compiler Compiler-RT
         git: repo=git@github.com:/securesystemslab/multicompiler-compiler-rt-priv.git
@@ -101,6 +121,8 @@
                 version=cfar_38
                 depth=1
                 accept_hostkey=true
+        become: true
+        become_user: vagrant
 
       - name: Clone Multi Compiler PoolAlloc
         git: repo=git@github.com:/securesystemslab/poolalloc
@@ -108,12 +130,16 @@
                 version=cfar_38
                 depth=1
                 accept_hostkey=true
+        become: true
+        become_user: vagrant
 
       - name: Clone Multi Compiler SVF
         git: repo=git@github.com:/rboggild/SVF
                 dest=~/compilers/llvm/projects/svf
                 depth=1
                 accept_hostkey=true
+        become: true
+        become_user: vagrant
 
       - name: Clone Gold Linker
         git: repo=git@github.com:/securesystemslab/binutils.git
@@ -122,7 +148,7 @@
                 version=random_commons-2_24
                 accept_hostkey=true
                 update=no
-
-
+        become: true
+        become_user: vagrant
 
 
