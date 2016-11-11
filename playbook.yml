@@ -70,7 +70,7 @@
             - cmake
             - docker
             - build-essential
-            - linux-headers-$(uname -r)
+            - linux-headers-generic
             - libgmp-dev
             - libmpc-dev
             - libmpfr-dev
@@ -128,6 +128,9 @@
                 version=master
                 depth=1
                 accept_hostkey=true
+                recursive=yes
+                update=yes
+                track_submodules=yes
         become: true
         become_user: vagrant
 
@@ -190,3 +193,6 @@
         #become: true
         #become_user: vagrant
 
+  #post_tasks:
+    #- script: cleanup.sh
+      #become: true
