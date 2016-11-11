@@ -2,31 +2,13 @@
 - hosts: all
   vars:
     spf13_output_file_name: spf13-script.sh
-  roles:
-      - role: gantsign.oh-my-zsh
-        users:
-            - username: vagrant
-              oh_my_zsh:
-                  theme: agnoster
-                  plugins:
-                      - git
-                      - git-extras
-                      - colorize
-                      - colored-man-pages
-                      - ubuntu
-                      - wd
-                      - gnu-utils
-                      - nmap
-                      - npm
-                      - nvm
-                      - python
-                      - rsync
-                      - systemadmin
-                      - terminator
-                      - common-aliases
-                      - zsh-syntax-highlighting
+    apt_install_packages: git
 
-      - role: mjanser.powerline
+  pre_tasks:
+     - name: upgrade packages
+       apt: update_cache=yes
+       become: true
+       become_method: sudo
 
   tasks:
       - name: add cmake repo
@@ -96,76 +78,114 @@
         become_method: sudo
 
 
-      #- name: Download spf13 vim install script
-        #get_url: url=http://j.mp/spf13-vim3 dest=~/{{ spf13_output_file_name }}
-        #run_once: true
+      - name: Download spf13 vim install script
+        get_url: url=http://j.mp/spf13-vim3 dest=~/{{ spf13_output_file_name }}
+        run_once: true
+        become: true
+        become_user: vagrant
+
+      - name: launch spf13 install script
+        command: sh ~/{{ spf13_output_file_name }}
+        run_once: true
+        become: true
+        become_user: vagrant
+
+      - name: clone multi compiler project
+        git: repo=git@github.com:/ilovepi/hypervisor-super.git
+                dest=~/project
+                version=master
+                depth=1
+                accept_hostkey=true
+        become: true
+        become_user: vagrant
+
+      #- name: clone multi compiler project
+        #git: repo=git@github.com:/securesystemslab/multicompiler-priv.git
+                #dest=~/compilers/llvm
+                #version=cfar_38
+                #depth=1
+                #accept_hostkey=true
         #become: true
         #become_user: vagrant
 
-      #- name: launch spf13 install script
-        #command: sh ~/{{ spf13_output_file_name }}
-        #run_once: true
+      #- name: Clone Multi Compiler Clang
+        #git: repo=git@github.com:/securesystemslab/multicompiler-clang-priv.git
+                #dest=~/compilers/llvm/tools/clang
+                #version=cfar_38
+                #depth=1
+                #accept_hostkey=true
         #become: true
         #become_user: vagrant
 
+      #- name: Clone Multi Compiler Compiler-RT
+        #git: repo=git@github.com:/securesystemslab/multicompiler-compiler-rt-priv.git
+                #dest=~/compilers/llvm/projects/compiler-rt
+                #version=cfar_38
+                #depth=1
+                #accept_hostkey=true
+        #become: true
+        #become_user: vagrant
 
-      - name: Clone Multi Compiler project
-        git: repo=git@github.com:/securesystemslab/multicompiler-priv.git
-                dest=~/compilers/llvm
-                version=cfar_38
-                depth=1
-                accept_hostkey=true
-        become: true
-        become_user: vagrant
+      #- name: Clone Multi Compiler PoolAlloc
+        #git: repo=git@github.com:/securesystemslab/poolalloc
+                #dest=~/compilers/llvm/projects/poolalloc
+                #version=cfar_38
+                #depth=1
+                #accept_hostkey=true
+        #become: true
+        #become_user: vagrant
 
-      - name: Clone Multi Compiler Clang
-        git: repo=git@github.com:/securesystemslab/multicompiler-clang-priv.git
-                dest=~/compilers/llvm/tools/clang
-                version=cfar_38
-                depth=1
-                accept_hostkey=true
-        become: true
-        become_user: vagrant
+      #- name: Clone Multi Compiler SVF
+        #git: repo=git@github.com:/rboggild/SVF
+                #dest=~/compilers/llvm/projects/svf
+                #depth=1
+                #accept_hostkey=true
+        #become: true
+        #become_user: vagrant
 
-      - name: Clone Multi Compiler Compiler-RT
-        git: repo=git@github.com:/securesystemslab/multicompiler-compiler-rt-priv.git
-                dest=~/compilers/llvm/projects/compiler-rt
-                version=cfar_38
-                depth=1
-                accept_hostkey=true
-        become: true
-        become_user: vagrant
+      #- name: Clone Gold Linker
+        #git: repo=git@github.com:/securesystemslab/binutils.git
+                #dest=~/compilers/binutils
+                #depth=1
+                #version=random_commons-2_24
+                #accept_hostkey=true
+                #update=no
+        #become: true
+        #become_user: vagrant
 
-      - name: Clone Multi Compiler PoolAlloc
-        git: repo=git@github.com:/securesystemslab/poolalloc
-                dest=~/compilers/llvm/projects/poolalloc
-                version=cfar_38
-                depth=1
-                accept_hostkey=true
-        become: true
-        become_user: vagrant
+      #- name: Create compiler/tools directory
+        #file: path=~/compilers/tools state=directory
+        #become: true
+        #become_user: vagrant
 
-      - name: Clone Multi Compiler SVF
-        git: repo=git@github.com:/rboggild/SVF
-                dest=~/compilers/llvm/projects/svf
-                depth=1
-                accept_hostkey=true
-        become: true
-        become_user: vagrant
+  roles:
+      - role: gantsign.oh-my-zsh
+        users:
+            - username: vagrant
+              oh_my_zsh:
+                  theme: agnoster
+                  plugins:
+                      - git
+                      - git-extras
+                      - colorize
+                      - colored-man-pages
+                      - ubuntu
+                      - wd
+                      - gnu-utils
+                      - nmap
+                      - npm
+                      - nvm
+                      - python
+                      - rsync
+                      - systemadmin
+                      - terminator
+                      - common-aliases
+                      - zsh-syntax-highlighting
 
-      - name: Clone Gold Linker
-        git: repo=git@github.com:/securesystemslab/binutils.git
-                dest=~/compilers/binutils
-                depth=1
-                version=random_commons-2_24
-                accept_hostkey=true
-                update=no
+      - role: mjanser.powerline
+        powerline_users:
+            -vagrant
         become: true
-        become_user: vagrant
-
-      - name: Create compiler/tools directory
-        file: path=~/compilers/tools state=directory
-        become: true
-        become_user: vagrant
+        become_method: sudo
 
 
