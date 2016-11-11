@@ -10,6 +10,38 @@
        become: true
        become_method: sudo
 
+
+  roles:
+      - role: gantsign.oh-my-zsh
+        users:
+            - username: vagrant
+              oh_my_zsh:
+                  theme: agnoster
+                  plugins:
+                      - git
+                      - git-extras
+                      - colorize
+                      - colored-man-pages
+                      - ubuntu
+                      - wd
+                      - gnu-utils
+                      - nmap
+                      - npm
+                      - nvm
+                      - python
+                      - rsync
+                      - systemadmin
+                      - terminator
+                      - common-aliases
+                      - zsh-syntax-highlighting
+
+      - role: mjanser.powerline
+        powerline_users:
+            -vagrant
+        become: true
+        become_method: sudo
+
+
   tasks:
       - name: add cmake repo
         apt_repository: repo='ppa:george-edison55/cmake-3.x' state=present
@@ -157,35 +189,4 @@
         #file: path=~/compilers/tools state=directory
         #become: true
         #become_user: vagrant
-
-  roles:
-      - role: gantsign.oh-my-zsh
-        users:
-            - username: vagrant
-              oh_my_zsh:
-                  theme: agnoster
-                  plugins:
-                      - git
-                      - git-extras
-                      - colorize
-                      - colored-man-pages
-                      - ubuntu
-                      - wd
-                      - gnu-utils
-                      - nmap
-                      - npm
-                      - nvm
-                      - python
-                      - rsync
-                      - systemadmin
-                      - terminator
-                      - common-aliases
-                      - zsh-syntax-highlighting
-
-      - role: mjanser.powerline
-        powerline_users:
-            -vagrant
-        become: true
-        become_method: sudo
-
 
