@@ -110,17 +110,17 @@
         become_method: sudo
 
 
-      - name: Download spf13 vim install script
-        get_url: url=http://j.mp/spf13-vim3 dest=~/{{ spf13_output_file_name }}
-        run_once: true
-        become: true
-        become_user: vagrant
+      #- name: Download spf13 vim install script
+        #get_url: url=http://j.mp/spf13-vim3 dest=~/{{ spf13_output_file_name }}
+        #run_once: true
+        #become: true
+        #become_user: vagrant
 
-      - name: launch spf13 install script
-        command: sh ~/{{ spf13_output_file_name }}
-        run_once: true
-        become: true
-        become_user: vagrant
+      #- name: launch spf13 install script
+        #command: sh ~/{{ spf13_output_file_name }}
+        #run_once: true
+        #become: true
+        #become_user: vagrant
 
       - name: clone multi compiler project
         git: repo=git@github.com:/ilovepi/hypervisor-super.git
