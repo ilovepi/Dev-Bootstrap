@@ -7,6 +7,7 @@
   pre_tasks:
      - name: upgrade packages
        apt: update_cache=yes
+       cache_valid_time: 3600
        become: true
        become_method: sudo
 
@@ -41,6 +42,12 @@
         become: true
         become_method: sudo
 
+      - role: angstwad.docker_ubuntu
+         become: true
+         become_method: sudo
+
+
+
 
   tasks:
       - name: add cmake repo
@@ -68,7 +75,7 @@
             - apt-transport-https
             - ca-certificates
             - cmake
-            - docker
+            - ninja-build
             - build-essential
             - linux-headers-generic
             - libgmp-dev
